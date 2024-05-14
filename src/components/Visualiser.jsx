@@ -5,9 +5,13 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
+
 const AudioAnalyzer = () => {
   const audioRef = useRef(null);
   const containerRef = useRef(null);
+
+  const videoRef = useRef(null);
+
   const [audioMotion, setAudioMotion] = useState(null);
 
   const [inputValue, setInputValue] = useState('');
@@ -22,7 +26,14 @@ const AudioAnalyzer = () => {
   };
 
 
+  // ERROR:
+  // - React-player is not an instance of the HTML media element
+  // - How can I convert spotify/youtube videos to HTML media elements?
+
   useEffect(() => {
+
+    // const videoElement = audioRef.current.getInternalPlayer();
+    // console.log("this is the current video element", videoElement);
     // Initialize the AudioMotionAnalyzer once the component mounts
     if (containerRef.current && audioRef.current) {
       // const analyzer = new AudioMotionAnalyzer(containerRef.current, {
@@ -33,7 +44,7 @@ const AudioAnalyzer = () => {
       //   ledBars: true,
       // });
       const analyzer = new AudioMotionAnalyzer(containerRef.current, {
-        source: document.getElementsByTagName('video'),
+        source: audioRef.current,
         height: 150,
         mode: 3,
         barSpace: 0.6,
@@ -64,6 +75,21 @@ const AudioAnalyzer = () => {
   };
 
 
+  const handleVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.src = youtubeUrl;
+      const analyzer = new AudioMotionAnalyzer(containerRef.current, {
+        source: videoRef.current,
+        height: 150,
+        mode: 3,
+        barSpace: 0.6,
+        ledBars: true,
+      });
+      setAudioMotion(analyzer);
+      // videoRef.current.play();
+    }
+  }
+
 
   return (
     <>
@@ -74,6 +100,7 @@ const AudioAnalyzer = () => {
 
         <button onClick={playLiveStream}>Play Live Stream</button>
 
+        <button onClick={handleVideo}>Sync Video</button>
 
         <input type="file" onChange={handleFileUpload} />
         <div id="version">v{audioMotion && AudioMotionAnalyzer.version}</div>
@@ -92,6 +119,7 @@ const AudioAnalyzer = () => {
         </Button>
 
         <ReactPlayer
+          ref={videoRef}
           playing='true'
           controls='true'
           url={youtubeUrl}
