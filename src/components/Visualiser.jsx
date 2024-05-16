@@ -7,10 +7,12 @@ import Button from '@mui/material/Button';
 import YouTubeToHtml5 from '@thelevicole/youtube-to-html5-loader';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import { InputAdornment } from '@mui/material';
+import Slider from '@mui/material/Slider';
 import Grid from '@mui/material/Grid';
+import { InputAdornment } from '@mui/material';
 import '../App.css';
 
+import { HiSpeakerWave } from "react-icons/hi2";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { SiYoutubemusic } from "react-icons/si";
 import { FaCirclePlay } from "react-icons/fa6";
@@ -28,6 +30,7 @@ const AudioAnalyzer = () => {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(100);
 
   const [videoTitle, setVideoTitle] = useState('');
   const [videoAuthor, setVideoAuthor] = useState('');
@@ -99,10 +102,17 @@ const AudioAnalyzer = () => {
     }
   };
 
-  const seekVideo = (event) => {
-
-    videoRef.current.currentTime = event.target.value;
+  const seekVideo = (event, newValue) => {
     if (videoRef.current) {
+      videoRef.current.currentTime = newValue;
+      setCurrentTime(newValue);
+    }
+  };
+
+  const changeVolume = (event, newValue) => {
+    if (videoRef.current) {
+      videoRef.current.volume = newValue / 100;
+      setVolume(newValue);
     }
   };
 
@@ -212,16 +222,8 @@ const AudioAnalyzer = () => {
         </Box>
 
         <Box mt={'1.5%'} mx={'30%'}>
-          <Box>
-            <Typography>
-              {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')} {' / '} 
-              {Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}
-            </Typography>
-          </Box>
-
-          <input
-            type="range"
-            min="0"
+          <Slider
+            min={0}
             max={duration}
             value={currentTime}
             onChange={seekVideo}
@@ -229,19 +231,44 @@ const AudioAnalyzer = () => {
           />
         </Box>
 
-        <Box mt={'-8px'}>
-          <IconButton>
-            <IoPlaySkipBackCircle size={40} style={{ color: 'white' }} />
-          </IconButton>
+        <Box
+          display={'flex'}
+          alignItems={'center'}
           
-          <IconButton onClick={isPlaying ? pauseVideo : playVideo}>
-            {isPlaying ? <FaPauseCircle style={{ color: 'white' }} size={40} /> : <FaCirclePlay style={{ color: 'white' }} size={40} />}
-          </IconButton>
+          mx={'29%'}
+        >
+          <Box display={'flex'} mr='1%'>          
+            <IconButton>
+              <IoPlaySkipBackCircle size={40} style={{ color: 'white' }} />
+            </IconButton>
+            
+            <IconButton onClick={isPlaying ? pauseVideo : playVideo}>
+              {isPlaying ? <FaPauseCircle style={{ color: 'white' }} size={40} /> : <FaCirclePlay style={{ color: 'white' }} size={40} />}
+            </IconButton>
 
-          <IconButton>
-            <IoPlaySkipForwardCircle size={40} style={{ color: 'white' }} />
-          </IconButton>
+            <IconButton>
+              <IoPlaySkipForwardCircle size={40} style={{ color: 'white' }} />
+            </IconButton>
+          </Box>
+
+          <Box display="flex" alignItems="center" mr="25%">
+            <Typography>
+              {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')} {' / '} 
+              {Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}
+            </Typography>
+          </Box>
+          
+          <Box display="flex" alignItems="center" ml={'12%'} mr='4%' width={'20%'}>
+            <HiSpeakerWave style={{ marginRight: '10px' }} size={40} />
+            <Slider
+              value={volume}
+              onChange={changeVolume}
+              style={{ width: '100%' }}
+            />
+          </Box>
         </Box>
+
+
 
       </Box>
     </>

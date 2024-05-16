@@ -1,17 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import AudioMotionAnalyzer from 'audiomotion-analyzer';
-import DesktopAudioCapture from './components/Visualiser';
-import AddYoutube from './components/AddYoutube';
-import Test from './components/Test';
-
+import Visualiser from './components/Visualiser';
 function App() {
 
   return (
     <div className="App">
-      <DesktopAudioCapture />
-      {/* <AddYoutube /> */}
-      {/* <Test /> */}
+      <Visualiser />
     </div>
   );
 }
