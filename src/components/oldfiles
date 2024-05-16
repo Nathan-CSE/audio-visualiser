@@ -1,0 +1,198 @@
+import React, { useRef, useEffect, useState } from 'react';
+import AudioMotionAnalyzer from 'https://cdn.skypack.dev/audiomotion-analyzer?min';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import YouTubeToHtml5 from '@thelevicole/youtube-to-html5-loader'
+import axios from 'axios';
+import Typography from '@mui/material/Typography';
+import {
+  MediaController,
+  MediaControlBar,
+  MediaTimeRange,
+  MediaTimeDisplay,
+  MediaVolumeRange,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaMuteButton,
+} from 'media-chrome/react';
+import 'youtube-video-element';
+
+const AudioAnalyzer = () => {
+  const containerRef = useRef(null);
+  const audioRef = useRef(null);
+  const videoRef = useRef(null);
+
+  const [audioMotion, setAudioMotion] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoAuthor, setVideoAuthor] = useState('');
+
+  const handleSubmit = () => {
+    setYoutubeUrl(inputValue);
+  };
+
+  const getData = async () => {
+    try {
+      const response = await axios.get(`https://noembed.com/embed?dataType=json&url=${youtubeUrl}`);
+      // console.log(response.data);
+      setVideoTitle(response.data.title);
+      setVideoAuthor(response.data.author_name);
+    } catch (err) {
+      alert(err);
+    }
+  }
+
+  // ERROR:
+  // - React-player is not an instance of the HTML media element
+  // - How can I convert spotify/youtube videos to HTML media elements?
+
+  useEffect(() => {
+    new YouTubeToHtml5({
+      withAudio: true // Filter streams to those with audio channels
+    });
+
+    getData();
+
+    if (containerRef.current) {
+      videoRef.current.src = youtubeUrl;
+      const analyzer = new AudioMotionAnalyzer(containerRef.current, {
+        source: videoRef.current,
+        height: 150,
+        mode: 5,
+        barSpace: 0.6,
+        ledBars: true,
+        gradient: 'rainbow',
+      });
+      setAudioMotion(analyzer);
+
+      // Clean up on component unmount
+      return () => analyzer.destroy();
+
+    }
+  }, [youtubeUrl]);
+
+  // AudioRef is a HTML media element, which has the play() method
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play
+
+  const playLiveStream = () => {
+    if (audioRef.current) {
+      audioRef.current.src = 'https://icecast2.ufpel.edu.br/live';
+      audioRef.current.play();
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const fileBlob = event.target.files[0];
+    if (fileBlob && audioRef.current) {
+      audioRef.current.src = URL.createObjectURL(fileBlob);
+      audioRef.current.play();
+    }
+  };
+
+
+  const handleVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.src = youtubeUrl;
+      const analyzer = new AudioMotionAnalyzer(containerRef.current, {
+        source: videoRef.current,
+        height: 150,
+        mode: 3,
+        barSpace: 0.6,
+        ledBars: true,
+      });
+      setAudioMotion(analyzer);
+      // videoRef.current.play();
+    }
+  }
+
+  const resetVisualizer = () => {
+    audioMotion.setOptions();
+  }
+
+
+  return (
+    <>
+      <div ref={containerRef} style={{ width: '100%', height: '100%' }}></div>
+
+      <button onClick={resetVisualizer} name={'Reset to Default'}/>
+
+      {/* <audio ref={audioRef} controls style={{ display: 'none' }}></audio> */}
+      {/* <button onClick={playLiveStream}>Play Live Stream</button> */}
+      {/* <button onClick={handleVideo}>Sync Video</button> */}
+
+      {/* <input type="file" onChange={handleFileUpload} /> */}
+
+      <Typography variant="h5">Now playing: {videoTitle}</Typography>
+      <Typography variant="h5">By: {videoAuthor}</Typography>
+
+      <video
+        ref={videoRef}
+        controls
+        data-yt2html5={youtubeUrl}
+      />
+
+      {/* <MediaController>
+
+        <video
+          lot="media"
+          preload="auto"
+          ref={videoRef}
+          data-yt2html5={youtubeUrl}
+          src={youtubeUrl}
+        />
+
+        <MediaControlBar>
+          <MediaPlayButton></MediaPlayButton>
+          <MediaTimeRange></MediaTimeRange>
+          <MediaTimeDisplay showDuration></MediaTimeDisplay>
+          <MediaMuteButton></MediaMuteButton>
+          <MediaVolumeRange></MediaVolumeRange>
+        </MediaControlBar>
+
+      </MediaController> */}
+
+
+
+      <Box m={'10px'} display={'flex'} flexDirection={'column'} >
+
+        <media-controller>
+          <youtube-video
+            src="https://www.youtube.com/watch?v=tO01J-M3g0U"
+            slot="media"
+            crossorigin
+            muted
+          ></youtube-video>
+
+          <media-loading-indicator slot="centered-chrome" noautohide></media-loading-indicator>
+          <media-control-bar>
+            <media-play-button></media-play-button>
+            <media-seek-backward-button></media-seek-backward-button>
+            <media-seek-forward-button ></media-seek-forward-button>
+            <media-mute-button></media-mute-button>
+            <media-volume-range></media-volume-range>
+            <media-time-range></media-time-range>
+            <media-time-display showduration remaining></media-time-display>
+            <media-playback-rate-button></media-playback-rate-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </media-control-bar>
+        </media-controller>
+
+        <TextField
+          id="outlined-basic"
+          label="YouTube URL"
+          variant="outlined"
+          onInput={ event => setInputValue(event.target.value) }
+        />
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          Submit
+        </Button>
+
+      </Box>
+    </>  
+  );
+};
+
+export default AudioAnalyzer;
