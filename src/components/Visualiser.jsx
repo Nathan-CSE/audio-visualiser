@@ -144,6 +144,8 @@ const AudioAnalyzer = () => {
         overlay: true,
         bgAlpha: 0.1,
         showScaleX: false,
+        showPeaks: false,
+        // roundBars: true,
         // radial: true
       });
       

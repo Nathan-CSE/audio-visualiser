@@ -69,3 +69,9 @@ body, html {
   z-index: 1; /* Ensure content is above the overlay */
   color: white;
 }
+
+.menus {
+  position: absolute;
+  z-index: 2; /* Ensure menus are above the visualiser */
+  color: white;
+}
