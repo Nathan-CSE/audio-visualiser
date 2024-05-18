@@ -23,7 +23,7 @@ import { IoPlaySkipForwardCircle } from "react-icons/io5";
 const NowPlaying = () => {
   const { containerRef, videoRef, audioMotion } = useContext(VisualiserContext);
   const [inputValue, setInputValue] = useState('');
-  const [youtubeUrl, setYoutubeUrl] = useState('https://youtu.be/Bu5D58xdVCQ?si=Oa9Ltt6DA2DV9Pp-');
+  const [youtubeUrl, setYoutubeUrl] = useState('https://youtu.be/8VpgVEoSSik?si=EJwCBbeJ4YOAn9pf');
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -90,17 +90,21 @@ const NowPlaying = () => {
     }
   };
 
-  const seekVideo = (newValue) => {
-    if (videoRef.current) {
+  const seekVideo = (event, newValue) => {
+    if (!isNaN(newValue) && isFinite(newValue) && videoRef.current) {
       videoRef.current.currentTime = newValue;
       setCurrentTime(newValue);
+    } else {
+      console.error('Invalid time value:', newValue);
     }
   };
-
-  const changeVolume = (newValue) => {
-    if (videoRef.current) {
+  
+  const changeVolume = (event, newValue) => {
+    if (!isNaN(newValue) && isFinite(newValue) && videoRef.current) {
       videoRef.current.volume = newValue / 100;
       setVolume(newValue);
+    } else {
+      console.error('Invalid volume value:', newValue);
     }
   };
 
