@@ -1,14 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
-import Visualiser from './components/Visualiser';
+import Box from '@mui/material/Box';
 import VisualiserOptions from './components/VisualiserOptions';
-function App() {
+import { VisualiserProvider } from './components/VisualiserContext';
+import NowPlaying from './components/NowPlaying';
 
+function App() {
   return (
-    <div className="App">
-      <VisualiserOptions />
-      <Visualiser />
-    </div>
+    <>
+      <Box className="App">
+        <VisualiserProvider>
+          <VisualiserOptions />
+          <NowPlaying />
+        </VisualiserProvider>
+      </Box>
+    </>
   );
 }
 

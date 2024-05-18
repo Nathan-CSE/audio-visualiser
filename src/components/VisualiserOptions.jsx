@@ -14,14 +14,18 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 import { IoSettingsSharp } from "react-icons/io5";
 
 import '../App.css';
 
-export default function TemporaryDrawer() {
+export default function VisualiserOptions() {
   const [open, setOpen] = React.useState(false);
   const [menuAnchorEls, setMenuAnchorEls] = useState({});
+  const [isRadial, setIsRadial] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -33,9 +37,21 @@ export default function TemporaryDrawer() {
 
   const handleMenuClose = (menuName) => () => {
     setMenuAnchorEls((prev) => ({ ...prev, [menuName]: null }));
-    setOpen(false); // Close the drawer when a menu item is selected
+    setOpen(false);
   };
 
+  const handleChange = (event) => {
+    if (event.target.value) {
+      setIsRadial(true);
+    } else {
+      setIsRadial(false);
+    }
+
+  };
+
+  const submitChanges = () => {
+
+  }
 
   const DrawerList = (
     <Box
@@ -54,35 +70,25 @@ export default function TemporaryDrawer() {
 
       <Typography variant="h5" style={{ fontWeight: 600 }}>Visualiser Options</Typography>
 
-      {['Visualiser Mode', 'Column Modifier', 'Colour Theme', 'Background'].map((menuName) => (
-        <Box key={menuName} sx={{ margin: 2 }}>
-          <Button
-            variant="contained"
-            onClick={handleMenuClick(menuName)}
-            sx={{ width: '100%' }}
-          >
-            {menuName}
-          </Button>
-          <Menu
-            anchorEl={menuAnchorEls[menuName]}
-            open={Boolean(menuAnchorEls[menuName])}
-            onClose={handleMenuClose(menuName)}
-          >
-            {['Option 1', 'Option 2', 'Option 3'].map((option) => (
-              <MenuItem key={option}>
-                {option}
-              </MenuItem>
-              // <MenuItem key={option} onClick={handleMenuClose(menuName)}>
-              //   {option}
-              // </MenuItem>
-            ))}
-          </Menu>
-        </Box>
-      ))}
+      
+      <FormControl sx={{ minWidth: '90%', mt: '5%' }}>
+        <InputLabel id="demo-simple-select-label">Visualiser Type</InputLabel>
+        <Select
+          value={isRadial}
+          marginX={'1%'}
+          label="VisualiserType"
+          onChange={handleChange}
+        >
+          <MenuItem value={false}>Line</MenuItem>
+          <MenuItem value={true}>Radial</MenuItem>
+        </Select>
+      </FormControl>
+      
 
       <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
         Save Changes
       </Button>
+
       <Button variant="contained" color="secondary" sx={{ marginTop: 2 }}>
         Reset to Default
       </Button>
