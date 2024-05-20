@@ -20,8 +20,15 @@ import { FaPauseCircle } from "react-icons/fa";
 import { IoPlaySkipBackCircle } from "react-icons/io5";
 import { IoPlaySkipForwardCircle } from "react-icons/io5";
 
+import AddToQueue from './AddToQueue';
+import { useQueue } from './QueueContext';
+
 const NowPlaying = () => {
   const { containerRef, videoRef, audioMotion } = useContext(VisualiserContext);
+
+  const { queue, addToQueue, removeFromQueue } = useQueue();
+  const [currentVideo, setCurrentVideo] = useState(null);
+
   const [inputValue, setInputValue] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('https://youtu.be/8VpgVEoSSik?si=EJwCBbeJ4YOAn9pf');
   const [duration, setDuration] = useState(0);
@@ -49,16 +56,44 @@ const NowPlaying = () => {
     }
   };
 
-  const loadVideo = async () => {
-    const controller = new YouTubeToHtml5({
-      withAudio: true,
-    });
+  // const loadVideo = async () => {
+  //   const controller = new YouTubeToHtml5({
+  //     withAudio: true,
+  //   });
 
-    controller.load(youtubeUrl);
+  //   controller.load(youtubeUrl);
+
+  //   const videoElement = document.querySelector('video[data-yt2html5]');
+  //   if (videoElement) {
+  //     videoRef.current = videoElement;
+
+  //     if (audioMotion) {
+  //       audioMotion.disconnectInput();
+  //       audioMotion.connectInput(videoElement);
+  //     }
+
+  //     // Update duration and current time
+  //     videoElement.onloadedmetadata = () => {
+  //       setDuration(videoElement.duration);
+  //     };
+
+  //     videoElement.ontimeupdate = () => {
+  //       setCurrentTime(videoElement.currentTime);
+  //     };
+  //   }
+  // };
+
+  const loadVideo = async (url) => {
+    const controller = new YouTubeToHtml5({ withAudio: true });
+    controller.load(url);
 
     const videoElement = document.querySelector('video[data-yt2html5]');
     if (videoElement) {
       videoRef.current = videoElement;
+
+      videoElement.onended = () => {
+        removeFromQueue(currentVideo.id);
+      };
 
       if (audioMotion) {
         audioMotion.disconnectInput();
@@ -73,8 +108,10 @@ const NowPlaying = () => {
       videoElement.ontimeupdate = () => {
         setCurrentTime(videoElement.currentTime);
       };
+
     }
   };
+
 
   const playVideo = () => {
     if (videoRef.current) {
@@ -113,6 +150,18 @@ const NowPlaying = () => {
     getData();
   }, [youtubeUrl]);
 
+  useEffect(() => {
+    if (queue.length > 0) {
+      setCurrentVideo(queue[0]);
+    }
+  }, [queue]);
+
+  useEffect(() => {
+    if (currentVideo) {
+      loadVideo(currentVideo.url);
+    }
+  }, [currentVideo]);
+
   return (
     <>
       <Box className="overlay"></Box>
@@ -150,7 +199,7 @@ const NowPlaying = () => {
           maxHeight={'45vh'}
         />
 
-        <Box>
+        {/* <Box>
           <TextField
             placeholder="YouTube URL"
             variant="outlined"
@@ -168,7 +217,9 @@ const NowPlaying = () => {
               ),
             }}
           />
-        </Box>
+        </Box> */}
+
+        <AddToQueue />
 
         <Box mt={'1.5%'} mx={'30%'}>
           <Slider
