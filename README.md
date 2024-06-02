@@ -13,3 +13,8 @@ This is a personal project of mine to allow users to visualise the audio from Yo
 * Users will be able to create custom settings and save them as presets, stored either locally through localstorage, a custom .json settings that is exported or by logging in/signing up for an account.
 * Multiple users will be able to join a session and queue videos, control playback and change visualiser options. Users are able to join as a guest or log into their account.
 * Rewrite the latest version of the Youtube to HTML5 library to work with React (currently, only legacy versions seem to support React) and self-host the API middle-man service in case current services are shutdown.  
+
+## WIP Screenshots!
+
+![Current Visualiser Progress](wip.png)
+![Figma Mockups](figma.png)
