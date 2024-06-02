@@ -53,7 +53,7 @@ export default function VisualiserOptions() {
   };
 
   const handleChange = (event) => {
-    console.log(event.target);
+    // console.log(event.target);
 
     switch(event.target.name) {
       case 'VisualiserType':
@@ -184,10 +184,10 @@ export default function VisualiserOptions() {
           name='ColumnModifier'
           onChange={handleChange}
         >
-          <MenuItem value={1}>Even Less Columns</MenuItem>
           <MenuItem value={7}>Less Columns</MenuItem>
           <MenuItem value={4}>Default Columns</MenuItem>
           <MenuItem value={2}>More Columns</MenuItem>
+          <MenuItem value={1}>Even More Columns</MenuItem>
           <MenuItem value={10}>Line Graph</MenuItem>
           {/* <MenuItem value={10}>Filled Line Graph</MenuItem> */}
           <MenuItem value={0}>Discrete Frequencies</MenuItem>

@@ -30,6 +30,10 @@ const AddToQueue = () => {
 
   };
 
+  const handleRemoveVideo = (id) => {
+    removeFromQueue(id);
+  };
+
   return (
     // <div>
     //   <TextField
@@ -59,6 +63,14 @@ const AddToQueue = () => {
             ),
           }}
         />
+        <ul>
+          {queue.map(video => (
+            <li key={video.id}>
+              {video.youtubeUrl}
+              <button onClick={() => handleRemoveVideo(video.id)}>Remove</button>
+            </li>
+          ))}
+        </ul>
       </Box>
     </>    
   );

@@ -56,44 +56,16 @@ const NowPlaying = () => {
     }
   };
 
-  // const loadVideo = async () => {
-  //   const controller = new YouTubeToHtml5({
-  //     withAudio: true,
-  //   });
+  const loadVideo = async () => {
+    const controller = new YouTubeToHtml5({
+      withAudio: true,
+    });
 
-  //   controller.load(youtubeUrl);
-
-  //   const videoElement = document.querySelector('video[data-yt2html5]');
-  //   if (videoElement) {
-  //     videoRef.current = videoElement;
-
-  //     if (audioMotion) {
-  //       audioMotion.disconnectInput();
-  //       audioMotion.connectInput(videoElement);
-  //     }
-
-  //     // Update duration and current time
-  //     videoElement.onloadedmetadata = () => {
-  //       setDuration(videoElement.duration);
-  //     };
-
-  //     videoElement.ontimeupdate = () => {
-  //       setCurrentTime(videoElement.currentTime);
-  //     };
-  //   }
-  // };
-
-  const loadVideo = async (url) => {
-    const controller = new YouTubeToHtml5({ withAudio: true });
-    controller.load(url);
+    controller.load(youtubeUrl);
 
     const videoElement = document.querySelector('video[data-yt2html5]');
     if (videoElement) {
       videoRef.current = videoElement;
-
-      videoElement.onended = () => {
-        removeFromQueue(currentVideo.id);
-      };
 
       if (audioMotion) {
         audioMotion.disconnectInput();
@@ -108,9 +80,37 @@ const NowPlaying = () => {
       videoElement.ontimeupdate = () => {
         setCurrentTime(videoElement.currentTime);
       };
-
     }
   };
+
+  // const loadVideo = async (url) => {
+  //   const controller = new YouTubeToHtml5({ withAudio: true });
+  //   controller.load(url);
+
+  //   const videoElement = document.querySelector('video[data-yt2html5]');
+  //   if (videoElement) {
+  //     videoRef.current = videoElement;
+
+  //     videoElement.onended = () => {
+  //       removeFromQueue(currentVideo.id);
+  //     };
+
+  //     if (audioMotion) {
+  //       audioMotion.disconnectInput();
+  //       audioMotion.connectInput(videoElement);
+  //     }
+
+  //     // Update duration and current time
+  //     videoElement.onloadedmetadata = () => {
+  //       setDuration(videoElement.duration);
+  //     };
+
+  //     videoElement.ontimeupdate = () => {
+  //       setCurrentTime(videoElement.currentTime);
+  //     };
+
+  //   }
+  // };
 
 
   const playVideo = () => {
@@ -162,6 +162,19 @@ const NowPlaying = () => {
     }
   }, [currentVideo]);
 
+  useEffect(() => {
+    if (currentTime >= duration) {
+      if (queue.length > 0) {
+        const newVideo = queue[0];
+        queue.shift();
+        setYoutubeUrl(newVideo.youtubeUrl);
+      } else {
+        console.log("No more videos in the queue");
+        // Handle the end of the queue scenario, e.g., set a default video, show a message, etc.
+      }
+    }
+  }, [currentTime])
+    
   return (
     <>
       <Box className="overlay"></Box>
