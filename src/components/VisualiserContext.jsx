@@ -20,6 +20,7 @@ export const VisualiserProvider = ({ children }) => {
 
   useEffect(() => {
     if (containerRef.current && videoRef.current) {
+
       const visualiser = new AudioMotionAnalyzer(containerRef.current, {
         source: videoRef.current,
         height: 150,
@@ -36,6 +37,8 @@ export const VisualiserProvider = ({ children }) => {
       setAudioMotion(visualiser);
       const { canvasWidth, canvasHeight } = calculateVisualiserSize();
       visualiser.setCanvasSize(canvasWidth, canvasHeight);
+      
+      videoRef.current.play();
 
       // Clean up on component unmount
       return () => visualiser.destroy();

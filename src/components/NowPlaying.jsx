@@ -59,9 +59,22 @@ const NowPlaying = () => {
   const loadVideo = async () => {
     const controller = new YouTubeToHtml5({
       withAudio: true,
+      autoload: false,
     });
 
-    controller.load(youtubeUrl);
+    // Add loading class to video element
+    controller.addAction('api.before', function(element) {   
+      element.classList.add('is-loading');
+    });
+
+    // Remove loading class after API HTTP request completes.
+    // Play video after API request finishes
+    controller.addAction('api.after', function(element) {
+      element.classList.remove('is-loading');
+      playVideo();
+    });
+
+    controller.load();
 
     const videoElement = document.querySelector('video[data-yt2html5]');
     if (videoElement) {
@@ -81,36 +94,8 @@ const NowPlaying = () => {
         setCurrentTime(videoElement.currentTime);
       };
     }
+
   };
-
-  // const loadVideo = async (url) => {
-  //   const controller = new YouTubeToHtml5({ withAudio: true });
-  //   controller.load(url);
-
-  //   const videoElement = document.querySelector('video[data-yt2html5]');
-  //   if (videoElement) {
-  //     videoRef.current = videoElement;
-
-  //     videoElement.onended = () => {
-  //       removeFromQueue(currentVideo.id);
-  //     };
-
-  //     if (audioMotion) {
-  //       audioMotion.disconnectInput();
-  //       audioMotion.connectInput(videoElement);
-  //     }
-
-  //     // Update duration and current time
-  //     videoElement.onloadedmetadata = () => {
-  //       setDuration(videoElement.duration);
-  //     };
-
-  //     videoElement.ontimeupdate = () => {
-  //       setCurrentTime(videoElement.currentTime);
-  //     };
-
-  //   }
-  // };
 
 
   const playVideo = () => {
@@ -148,13 +133,11 @@ const NowPlaying = () => {
   useEffect(() => {
     loadVideo();
     getData();
-  }, [youtubeUrl]);
 
-  useEffect(() => {
-    if (queue.length > 0) {
-      setCurrentVideo(queue[0]);
-    }
-  }, [queue]);
+    // videoRef.current.play();
+    // setIsPlaying(true);
+
+  }, [youtubeUrl]);
 
   useEffect(() => {
     if (currentVideo) {
@@ -162,12 +145,15 @@ const NowPlaying = () => {
     }
   }, [currentVideo]);
 
+  // This checks to see if the current video has finished playing
   useEffect(() => {
     if (currentTime >= duration) {
       if (queue.length > 0) {
+               
         const newVideo = queue[0];
-        queue.shift();
         setYoutubeUrl(newVideo.youtubeUrl);
+        removeFromQueue(newVideo.id);
+
       } else {
         console.log("No more videos in the queue");
         // Handle the end of the queue scenario, e.g., set a default video, show a message, etc.
@@ -180,7 +166,7 @@ const NowPlaying = () => {
       <Box className="overlay"></Box>
 
       <Box>
-        <video ref={videoRef} className="video-background" data-yt2html5={youtubeUrl} />
+        <video autoplay ref={videoRef} className="video-background" data-yt2html5={youtubeUrl} />
       </Box>
 
       <Box className="content">
@@ -256,27 +242,27 @@ const NowPlaying = () => {
 
             <IconButton>
                 <IoPlaySkipForwardCircle size={40} style={{ color: 'white' }} />
-              </IconButton>
-            </Box>
-
-            <Box display="flex" alignItems="center" mr="25%">
-              <Typography>
-                {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')} {' / '} 
-                {Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}
-              </Typography>
-            </Box>
-            
-            <Box display="flex" alignItems="center" ml={'12%'} mr='4%' width={'20%'}>
-              <HiSpeakerWave style={{ marginRight: '10px' }} size={40} />
-              <Slider
-                value={volume}
-                onChange={changeVolume}
-                style={{ width: '100%' }}
-              />
-            </Box>
+            </IconButton>
           </Box>
 
+          <Box display="flex" alignItems="center" mr="25%">
+            <Typography>
+              {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')} {' / '} 
+              {Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}
+            </Typography>
+          </Box>
+            
+          <Box display="flex" alignItems="center" ml={'12%'} mr='4%' width={'20%'}>
+            <HiSpeakerWave style={{ marginRight: '10px' }} size={40} />
+            <Slider
+              value={volume}
+              onChange={changeVolume}
+              style={{ width: '100%' }}
+            />
+          </Box>
         </Box>
+
+      </Box>
     </>
   );
 };
