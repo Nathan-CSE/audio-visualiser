@@ -1,5 +1,5 @@
 {
-  "name": "spotify-visualiser",
+  "name": "audio-visualiser",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -23,8 +23,7 @@
     "react-player": "^2.16.0",
     "react-scripts": "5.0.1",
     "uuid": "^9.0.1",
-    "web-vitals": "^2.1.4",
-    "youtube-video-element": "^1.1.1"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "WATCHPACK_POLLING=true react-scripts start",

@@ -35,15 +35,6 @@ const AddToQueue = () => {
   };
 
   return (
-    // <div>
-    //   <TextField
-    //     value={inputValue}
-    //     onChange={(e) => setInputValue(e.target.value)}
-    //     placeholder="Enter YouTube URL"
-    //   />
-    //   <Button onClick={handleAdd}>Add to Queue</Button>
-    // </div>
-
     <>
       <Box>
         <TextField

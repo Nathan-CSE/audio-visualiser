@@ -71,7 +71,12 @@ const NowPlaying = () => {
     // Play video after API request finishes
     controller.addAction('api.after', function(element) {
       element.classList.remove('is-loading');
-      playVideo();
+      try {
+
+        playVideo();
+      } catch (error) {
+        console.error('Error playing video:', error);
+      }
     });
 
     controller.load();
@@ -100,8 +105,13 @@ const NowPlaying = () => {
 
   const playVideo = () => {
     if (videoRef.current) {
-      videoRef.current.play();
-      setIsPlaying(true);
+      try {
+
+        videoRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error('Error playing video:', error);
+      }
     }
   };
 
@@ -133,9 +143,6 @@ const NowPlaying = () => {
   useEffect(() => {
     loadVideo();
     getData();
-
-    // videoRef.current.play();
-    // setIsPlaying(true);
 
   }, [youtubeUrl]);
 
@@ -197,26 +204,6 @@ const NowPlaying = () => {
           minHeight={'45vh'}
           maxHeight={'45vh'}
         />
-
-        {/* <Box>
-          <TextField
-            placeholder="YouTube URL"
-            variant="outlined"
-            value={inputValue}
-            onChange={handleInputChange}
-            style={{ backgroundColor: 'white', borderRadius: '5px', width: '45%' }}
-            InputLabelProps={{ shrink: false }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button variant="contained" color="primary" onClick={handleSubmit}>
-                    Submit
-                  </Button>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box> */}
 
         <AddToQueue />
 
