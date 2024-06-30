@@ -134,9 +134,6 @@ const NowPlaying = () => {
     loadVideo();
     getData();
 
-    // videoRef.current.play();
-    // setIsPlaying(true);
-
   }, [youtubeUrl]);
 
   useEffect(() => {
